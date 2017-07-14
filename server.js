@@ -43,9 +43,11 @@ app.get('/', function homepage (req, res) {
  */
 
 app.get('/api/todos/search', function search (req, res) {
-  /* This endpoint responds with the search results from the
-   * query in the request. COMPLETE THIS ENDPOINT LAST.
-   */
+  let taskSearch = req.query.q
+  let filterResult = todos.filter(function (todoArgument) {
+    return (taskSearch.toLowerCase() === todoArgument.task.toLowerCase())
+  })
+  res.json({data: filterResult})
 })
 
 app.get('/api/todos', function index (req, res) {
@@ -55,17 +57,18 @@ app.get('/api/todos', function index (req, res) {
 app.post('/api/todos', function create (req, res) {
   var newTask = req.body
   if (todos.length > 0) {
-    newTask._id = todos[todos.length - 1]._id + 1;
+    newTask._id = todos[todos.length - 1]._id + 1
   } else {
-    newTask._id = 1;
+    newTask._id = 1
   }
   todos.push(newTask)
+  res.json(newTask)
 })
 
 app.get('/api/todos/:id', function show (req, res) {
-  let idSelectedTask = parseInt(req.params.id) // parse 0 string into variable
-  let matchingTask = todos.filter(function (todo) {
-    return todo._id === idSelectedTask // match parsed variable to our object id
+  let selectedTask = parseInt(req.params.id) // parse 0 string into variable
+  let matchingTask = todos.filter(function (todoArgument) {
+    return todoArgument._id === selectedTask // match parsed variable to our object id
   })[0]
   // send foundTodo as JSON response
   res.json(matchingTask)
@@ -76,22 +79,23 @@ app.put('/api/todos/:id', function update (req, res) {
    * id specified in the route parameter (:id) and respond
    * with the newly updated todo.
    */
-   let idSelectedUpdate = parseInt(req.params.id) // parse 0   let matchingTask = todos.filter(function (todo) {
-   let matchingTask = todos.filter(function (todo) {
-     return todo._id === idSelectedUpdate // match parsed variable to our object id
-   })[0];
-   idSelectedUpdate.task = req.body.task
-   idSelectedUpdate.description = req.body.description
+  let selectedTask = parseInt(req.params.id) // parse 0   let matchingTask = todos.filter(function (todo) {
+  let updatingTask = todos.filter(function (todoArgument) {
+    return todoArgument._id === selectedTask // match parsed variable to our object id
+  })[0]
+  updatingTask.task = req.body.task
+  updatingTask.description = req.body.description
 
-   res.json(idSelectedTask)
+  res.json(updatingTask)
 })
 
 app.delete('/api/todos/:id', function destroy (req, res) {
-  /* This endpoint will delete a single todo with the
-   * id specified in the route parameter (:id) and respond
-   * with success.
-   */
-   let idSelectedDeleted
+  let selectedTask = parseInt(req.params.id)
+  let deletingTask = todos.filter(function (todoArgument) {
+    return todoArgument._id === selectedTask
+  })[0]
+  todos.splice(todos.indexOf(deletingTask), 1)
+  res.json(deletingTask)
 })
 
 /**********
