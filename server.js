@@ -18,8 +18,7 @@ var todos = [
   { _id: 7, task: 'Laundry', description: 'Wash clothes'},
   { _id: 27, task: 'Grocery Shopping', description: 'Buy dinner for this week'},
   { _id: 44, task: 'Homework', description: 'Make this app super awesome!'}
-];
-
+]
 
 /**********
  * ROUTES *
@@ -50,28 +49,41 @@ app.get('/api/todos/search', function search (req, res) {
 })
 
 app.get('/api/todos', function index (req, res) {
-  res.json({data:todos})
+  res.json({data: todos})
 })
 
 app.post('/api/todos', function create (req, res) {
-  // var newTask = req.body.todos
-  // todos.push(newTask)
+  var newTask = req.body
+  if (todos.length > 0) {
+    newTask._id = todos[todos.length - 1]._id + 1;
+  } else {
+    newTask._id = 1;
+  }
+  todos.push(newTask)
 })
 
 app.get('/api/todos/:id', function show (req, res) {
-  let idSelectedTask = parseInt(req.params.id) //parse 0 string into variable
+  let idSelectedTask = parseInt(req.params.id) // parse 0 string into variable
   let matchingTask = todos.filter(function (todo) {
-  return todo._id == idSelectedTask; //match parsed variable to our object id
-})[0];
+    return todo._id === idSelectedTask // match parsed variable to our object id
+  })[0]
   // send foundTodo as JSON response
-  res.json(matchingTask);
-});
+  res.json(matchingTask)
+})
 
 app.put('/api/todos/:id', function update (req, res) {
   /* This endpoint will update a single todo with the
    * id specified in the route parameter (:id) and respond
    * with the newly updated todo.
    */
+   let idSelectedUpdate = parseInt(req.params.id) // parse 0   let matchingTask = todos.filter(function (todo) {
+   let matchingTask = todos.filter(function (todo) {
+     return todo._id === idSelectedUpdate // match parsed variable to our object id
+   })[0];
+   idSelectedUpdate.task = req.body.task
+   idSelectedUpdate.description = req.body.description
+
+   res.json(idSelectedTask)
 })
 
 app.delete('/api/todos/:id', function destroy (req, res) {
@@ -79,6 +91,7 @@ app.delete('/api/todos/:id', function destroy (req, res) {
    * id specified in the route parameter (:id) and respond
    * with success.
    */
+   let idSelectedDeleted
 })
 
 /**********
